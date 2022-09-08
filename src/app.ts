@@ -4,6 +4,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import fs from "fs";
 import path from "path";
+import { NODE_ENV, PORT } from "./config";
 
 class App {
   private app: Application;
@@ -21,7 +22,7 @@ class App {
 
   constructor () {
     this.app = express();
-    this.port = 4000;
+    this.port = +PORT! || 4000;
 
     this.initializeMiddlewares();
     this.handleMiscRoutes();
@@ -44,13 +45,15 @@ class App {
     this.app.use(helmet());
 
     /**
-     * For log related services
+     * For log related services - only for dev server
      */
-    this.app.use(
-      morgan("common", {
-        stream: this.accessLogStream,
-      }),
-    );
+    if (NODE_ENV == "development" || NODE_ENV == "test") {
+      this.app.use(
+        morgan("common", {
+          stream: this.accessLogStream,
+        }),
+      );
+    }
   }
 
   private handleMiscRoutes = () => {
