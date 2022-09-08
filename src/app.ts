@@ -15,10 +15,6 @@ class App {
     "logs",
     "access.log",
   );
-  private accessLogStream: fs.WriteStream = fs.createWriteStream(
-    this.logPath,
-    { flags: "a" },
-  );
 
   constructor () {
     this.app = express();
@@ -48,9 +44,15 @@ class App {
      * For log related services - only for dev server
      */
     if (NODE_ENV == "development" || NODE_ENV == "test") {
+      const accessLogStream: fs.WriteStream = fs.createWriteStream(
+        this.logPath,
+        {
+          flags: "a",
+        },
+      );
       this.app.use(
         morgan("common", {
-          stream: this.accessLogStream,
+          stream: accessLogStream,
         }),
       );
     }
