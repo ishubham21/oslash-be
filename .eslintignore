@@ -1,0 +1,4 @@
+/node_modules
+/tests
+/dist
+jest.config.js
