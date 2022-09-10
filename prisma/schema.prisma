@@ -9,3 +9,44 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id        String     @id @default(uuid())
+  name      String     @unique @db.VarChar(64)
+  email     String     @db.VarChar(128)
+  password  String     @db.VarChar(256)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  shortcuts Shortcut[]
+  //Using BTree to perform operations in logn 
+  //Hash comes close to O(1), but technically it is more like O(N^2) in the worst case. This is because of the need to handling "collisions" - only useful for equality comparisons, not transaction safe, need to be manually rebuilt after crashes
+
+  //creating a Btree-based index on id
+  @@index([id], type: BTree)
+}
+
+model Shortcut {
+  shortlink   String
+  url         String
+  visibility  LinkAccess @default(Workspace)
+  tags        String[]
+  description String?    @db.VarChar(2000)
+  visits      Int
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  //making a relational table
+  User   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  //creating a composite key as the primary key
+  //this will ensure that a given shortlink is unique to each user
+  @@id([shortlink, userId])
+  //creating an index over the given id to gain fast retrival
+  @@index([shortlink, userId], type: BTree)
+}
+
+enum LinkAccess {
+  Workspace
+  Private
+}

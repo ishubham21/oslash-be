@@ -4,7 +4,15 @@ import helmet from "helmet";
 import morgan from "morgan";
 import fs from "fs";
 import path from "path";
-import { NODE_ENV, PORT } from "./config";
+import Redis from "ioredis";
+import session from "express-session";
+import connectRedis, { RedisStore } from "connect-redis";
+import {
+  NODE_ENV,
+  PORT,
+  REDIS_OPTIONS,
+  SESSION_OPTIONS,
+} from "./config";
 
 class App {
   private app: Application;
@@ -15,10 +23,16 @@ class App {
     "logs",
     "access.log",
   );
+  private RedisStore: RedisStore;
+  private redisClient: Redis;
 
   constructor () {
     this.app = express();
     this.port = +PORT! || 4000;
+
+    //redisStore is a class that makes use of session to connect to redis
+    this.RedisStore = connectRedis(session);
+    this.redisClient = new Redis(REDIS_OPTIONS);
 
     this.initializeMiddlewares();
     this.handleMiscRoutes();
@@ -80,6 +94,20 @@ class App {
         data: null,
       });
     });
+  };
+
+  private configureRedis = () => {
+    /**
+     * Configuring a middleware for express session to work with redis cache
+     */
+    this.app.use(
+      session({
+        ...SESSION_OPTIONS,
+
+        //creating a new instance of redis store class with our pre-configured redis client
+        store: new this.RedisStore({ client: this.redisClient }),
+      }),
+    );
   };
 }
 

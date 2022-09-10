@@ -10,16 +10,17 @@ ENV NPM_CONFIG_AUDIT=false
 ENV NPM_CONFIG_FUND=false
 
 # Update npm to version 7
-RUN npm i -g npm@8.1.2
+RUN npm i -g npm@8.10.0
 
 # Set the working directory
 WORKDIR /app/server
 
 # Copy files specifying dependencies
-COPY package.json package-lock.json ./
+COPY package.json  ./
+COPY package-lock.json ./
 
 # Install dependencies
-RUN npm ci --loglevel=$NPM_LOG_LEVEL;
+RUN npm install;
 
 # Copy Prisma schema
 COPY prisma/schema.prisma ./prisma/

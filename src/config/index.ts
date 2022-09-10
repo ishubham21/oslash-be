@@ -1,11 +1,7 @@
 import { config } from "dotenv";
 config();
 
-export const {
-  NODE_ENV,
-  PORT,
-  POSTGRESQL_USER,
-  POSTGRESQL_PASSWORD,
-  POSTGRESQL_PORT,
-  DATABASE_URL,
-} = process.env;
+export * from "./cache.config";
+export * from "./db.config";
+export * from "./session.config";
+export * from "./app.config";
