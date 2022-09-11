@@ -7,6 +7,8 @@ import path from "path";
 import session from "express-session";
 import { NODE_ENV, PORT, SESSION_OPTIONS } from "./config";
 import ConfigureRedis from "./services/redis/redis.service";
+import AuthRoute from "./routes/auth/auth.route";
+import { GeneralApiResponse } from "./interfaces";
 
 class App {
   private app: Application;
@@ -18,6 +20,7 @@ class App {
     "access.log",
   );
   private redisStore;
+  private userAuthRoute;
 
   constructor () {
     this.app = express();
@@ -25,23 +28,25 @@ class App {
 
     //configuring redis and fetching the value of redisStore that is newly configured with express-session
     this.redisStore = new ConfigureRedis().redisStore;
+    this.userAuthRoute = new AuthRoute();
 
     this.initializeMiddlewares();
+    this.initializeRoutes();
     this.handleMiscRoutes();
     this.configureExpressSessionMiddleware();
   }
 
-  public listen () {
+  public listen = (): void => {
     this.app.listen(this.port, () => {
       // eslint-disable-next-line no-console
       console.log(`Server is up on the port: ${this.port}`);
     });
-  }
+  };
 
   /**
    * To handle all middleware-related parts - making it modular to make it easier to test
    */
-  private initializeMiddlewares () {
+  private initializeMiddlewares = (): void => {
     this.app.use(cors());
     this.app.use(express.json());
 
@@ -66,9 +71,13 @@ class App {
         }),
       );
     }
-  }
+  };
 
-  private handleMiscRoutes = () => {
+  private initializeRoutes = (): void => {
+    this.app.use("/auth", this.userAuthRoute.router);
+  };
+
+  private handleMiscRoutes = (): void => {
     /**
      * Base route - to check API health
      */
@@ -78,7 +87,7 @@ class App {
         data: {
           server: "Base-Healthy",
         },
-      });
+      } as GeneralApiResponse);
     });
 
     /**
@@ -88,14 +97,14 @@ class App {
       res.status(404).json({
         error: "Requested route doesn't exist - 404",
         data: null,
-      });
+      } as GeneralApiResponse);
     });
   };
 
   /**
    * Configuring a middleware for express session to work with redis cache
    */
-  private configureExpressSessionMiddleware = () => {
+  private configureExpressSessionMiddleware = (): void => {
     this.app.use(
       session({
         ...SESSION_OPTIONS,
