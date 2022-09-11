@@ -1,13 +1,15 @@
 import { Router, Request, Response } from "express";
+import AuthController from "../../controllers/auth/auth.controller";
 import { GeneralApiResponse } from "../../interfaces";
 
 class AuthRoute {
   private path: string = "/";
   public router: Router;
-  // private authController
+  private authController;
 
   constructor () {
     this.router = Router();
+    this.authController = new AuthController();
 
     //initializing all the authentication routes
     this.initializeRoute();
@@ -27,6 +29,7 @@ class AuthRoute {
       `${this.path}register`,
       (req: Request, res: Response) => {
         //request forwarding to handle the request elements in the AuthController
+        this.authController.register(req, res);
       },
     );
   };
