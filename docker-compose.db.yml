@@ -13,7 +13,7 @@ services:
   cache:
     image: redis:alpine
     ports:
-      - "${REDIS_PORT}: 6379"
+      - "${REDIS_PORT}:6379"
     command: ['--requirepass "secret"']
 
 #for data to persist

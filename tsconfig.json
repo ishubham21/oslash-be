@@ -11,10 +11,11 @@
     "removeComments": true,
     "sourceMap": true
   },
-  "include": [
-    "./src/**/*.ts",
-    "tests/index.test.ts",
-    "src/seeds/cognitive.seed.js"
-  ],
-  "exclude": ["./node_modules", "tests", "**/*.spec.ts", "**/*.test.ts"]
+  "include": ["./src/**/*.ts"],
+  "exclude": [
+    "./node_modules",
+    "tests",
+    "**/*.spec.ts",
+    "**/*.test.ts"
+  ]
 }

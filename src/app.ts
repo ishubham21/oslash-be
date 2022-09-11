@@ -4,15 +4,9 @@ import helmet from "helmet";
 import morgan from "morgan";
 import fs from "fs";
 import path from "path";
-import Redis from "ioredis";
 import session from "express-session";
-import connectRedis, { RedisStore } from "connect-redis";
-import {
-  NODE_ENV,
-  PORT,
-  REDIS_OPTIONS,
-  SESSION_OPTIONS,
-} from "./config";
+import { NODE_ENV, PORT, SESSION_OPTIONS } from "./config";
+import ConfigureRedis from "./services/redis/redis.service";
 
 class App {
   private app: Application;
@@ -23,19 +17,18 @@ class App {
     "logs",
     "access.log",
   );
-  private RedisStore: RedisStore;
-  private redisClient: Redis;
+  private redisStore;
 
   constructor () {
     this.app = express();
     this.port = +PORT! || 4000;
 
-    //redisStore is a class that makes use of session to connect to redis
-    this.RedisStore = connectRedis(session);
-    this.redisClient = new Redis(REDIS_OPTIONS);
+    //configuring redis and fetching the value of redisStore that is newly configured with express-session
+    this.redisStore = new ConfigureRedis().redisStore;
 
     this.initializeMiddlewares();
     this.handleMiscRoutes();
+    this.configureExpressSessionMiddleware();
   }
 
   public listen () {
@@ -45,6 +38,9 @@ class App {
     });
   }
 
+  /**
+   * To handle all middleware-related parts - making it modular to make it easier to test
+   */
   private initializeMiddlewares () {
     this.app.use(cors());
     this.app.use(express.json());
@@ -96,16 +92,16 @@ class App {
     });
   };
 
-  private configureRedis = () => {
-    /**
-     * Configuring a middleware for express session to work with redis cache
-     */
+  /**
+   * Configuring a middleware for express session to work with redis cache
+   */
+  private configureExpressSessionMiddleware = () => {
     this.app.use(
       session({
         ...SESSION_OPTIONS,
 
-        //creating a new instance of redis store class with our pre-configured redis client
-        store: new this.RedisStore({ client: this.redisClient }),
+        //making use of redisStore instantiated from cache service
+        store: this.redisStore,
       }),
     );
   };
