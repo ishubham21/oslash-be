@@ -1,5 +1,5 @@
 export type GeneralApiResponse = {
-  error: string | null;
+  error: string | null | unknown;
   data: object | string | null | any;
 };
 
@@ -8,3 +8,8 @@ export type UserRegistrationData = {
   email: string;
   password: string;
 };
+
+export interface ServiceError {
+  error: null | unknown | string | undefined;
+  code: number;
+}

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Joi, { ValidationError, ValidationResult } from "joi";
 import {
   GeneralApiResponse,
+  ServiceError,
   UserRegistrationData,
 } from "../../interfaces";
 import AuthService from "../../services/auth/auth.service";
@@ -33,7 +34,7 @@ class AuthController {
         .lowercase()
         .trim()
         .required(),
-      passowrd: Joi.string()
+      password: Joi.string()
         .min(6)
         .max(256)
         .required(),
@@ -42,7 +43,7 @@ class AuthController {
     return schema.validate(userRegistrationData);
   };
 
-  public register = (req: Request, res: Response) => {
+  public register = async (req: Request, res: Response) => {
     //validating user registration data and sanitizing the req body
     const userRegistrationData: UserRegistrationData = req.body;
 
@@ -55,10 +56,16 @@ class AuthController {
 
     if (!validationError) {
       try {
-        this.authService.register(userRegistrationData);
-      } catch (error) {
-        console.log(error);
-        
+        await this.authService.register(userRegistrationData);
+      } catch (serviceError) {
+        const {
+          error,
+          code,
+        }: ServiceError = serviceError as ServiceError;
+        return res.status(code).json({
+          error,
+          data: null,
+        } as GeneralApiResponse);
       }
     } else {
       return res.status(403).json({

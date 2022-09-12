@@ -5,7 +5,7 @@ CREATE TYPE "LinkAccess" AS ENUM ('Workspace', 'Private');
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "name" VARCHAR(64) NOT NULL,
-    "email" VARCHAR(128) NOT NULL,
+    "email" VARCHAR(256) NOT NULL,
     "password" VARCHAR(256) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -32,7 +32,16 @@ CREATE TABLE "Shortcut" (
 CREATE UNIQUE INDEX "User_name_key" ON "User"("name");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
 CREATE INDEX "User_id_idx" ON "User"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Shortcut_shortlink_key" ON "Shortcut"("shortlink");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Shortcut_url_key" ON "Shortcut"("url");
 
 -- CreateIndex
 CREATE INDEX "Shortcut_shortlink_userId_idx" ON "Shortcut"("shortlink", "userId");
