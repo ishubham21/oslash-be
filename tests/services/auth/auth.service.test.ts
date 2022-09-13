@@ -1,9 +1,9 @@
-import AuthService from "../auth.service";
+import AuthService from "../../../src/services/auth/auth.service";
 import { PrismaClient, User } from "@prisma/client";
 import {
   ServiceError,
   UserRegistrationData,
-} from "../../../interfaces";
+} from "../../../src/interfaces";
 
 describe("encryption and decryption", () => {
   //instantiating the AuthService class before moving
@@ -87,7 +87,6 @@ describe("retrieve user", () => {
 describe("user registration - register function", () => {
   let authService: any;
   let prismaClient: PrismaClient;
-  let user: User | null;
   const data: UserRegistrationData = {
     name: "Dummy",
     email: "dummy@gmail.com",
@@ -100,7 +99,7 @@ describe("user registration - register function", () => {
 
     //create a user to be searched
     try {
-      user = await prismaClient.user.create({
+      const user: User | null = await prismaClient.user.create({
         data,
       });
     } catch (error) {
@@ -111,7 +110,7 @@ describe("user registration - register function", () => {
   afterAll(async () => {
     //delete the user from the DB after operations
     try {
-      user = await prismaClient.user.delete({
+      await prismaClient.user.delete({
         where: {
           email: data.email,
         },
@@ -136,57 +135,29 @@ describe("user registration - register function", () => {
     });
   });
 
-  // test("user must be registered in the database", async () => {
-  //   //add user using register
-  //   let id: string;
-  //   // try {
-  //   //   id = await authService.register(data);
-  //   // } catch (error) {
-  //   //   console.log("A server-side error occured", error);
-  //   // }
+  test("user must be registered in the database", async () => {
+    const { id } = await prismaClient.user.create({
+      data: {
+        name: "Shubham",
+        email: "ishubham2101@gmail.com",
+        password: "iamshubhamspassword",
+      },
+    });
 
-  //   // //find the user with id
-  //   // try {
-  //   //   user = await prismaClient.user.findUnique({
-  //   //     where: {
-  //   //       id
-  //   //     }
-  //   //   })
-  //   // } catch (error) {
-  //   //   console.log("A server-side error occured", error);
-  //   // }
+    const registered: User = (await prismaClient.user.findUnique({
+      where: {
+        id,
+      },
+    })) as User;
 
-  //   authService
-  //     .register({
-  //       name: "John",
-  //       email: "dummy-new@gmail.com",
-  //       password: "random-string",
-  //     })
-  //     .then(async (id: string) => {
-  //       user = (await prismaClient.user.findUnique({
-  //         where: {
-  //           id,
-  //         },
-  //       })) as User;
-  //       return { user, id };
-  //     })
-  //     .then(({ user, id }) => {
-  //       expect(user.name).toBe("Dummy");
-  //       expect(user.id).toBe(id);
-  //       expect(user.email).toBe("dummy@gmail.com");
-  //       return id;
-  //     })
-  //     .then(async (id: string) => {
-  //       await prismaClient.user.delete({
-  //         where: {
-  //           id,
-  //         },
-  //       });
-  //     })
-  //     .catch(error => {
-  //       console.log("A server-side error occured", error);
-  //     });
+    expect(registered.email).toBe("ishubham2101@gmail.com");
+    expect(registered.name).toBe("Shubham");
+    expect(registered.id).toBe(id);
 
-  //   //delete the user - having this in afterEach since data that we used is the same throughout
-  // });
+    await prismaClient.user.delete({
+      where: {
+        id,
+      },
+    });
+  });
 });

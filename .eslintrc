@@ -22,5 +22,13 @@
   "env": {
     "node": true,
     "es6": true
-  }
+  },
+  "overrides": [
+    {
+      "files": ["**/*.spec.ts", "**/*.test.ts"], // Or *.test.js
+      "rules": {
+        "require-jsdoc": "off"
+      }
+    }
+  ]
 }

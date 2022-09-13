@@ -3,9 +3,13 @@
  * this is to generate the tiniest possible production-grade files
  * this file can also be debugged easily using inline-source-map
  */
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require("path");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const nodeExternals = require("webpack-node-externals");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const TerserPlugin = require("terser-webpack-plugin");
 const APP_DIR = path.join(__dirname, "src");
 
@@ -27,7 +31,7 @@ module.exports = {
     rules: [
       {
         test: /\.(ts|js)?$/,
-        exclude: /node_modules/,
+        exclude: [/node_modules/, /tests/],
         use: {
           loader: "babel-loader",
           options: {
@@ -47,10 +51,10 @@ module.exports = {
     }),
   ],
 
-  optimization: {
-    minimize: true,
-    minimizer: [new TerserPlugin()],
-  },
+  // optimization: {
+    // minimize: true,
+    // minimizer: [new TerserPlugin()],
+  // },
 
   resolve: {
     extensions: [".ts", ".js"],
