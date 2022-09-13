@@ -3,9 +3,19 @@ import Joi, { ValidationError, ValidationResult } from "joi";
 import {
   GeneralApiResponse,
   ServiceError,
+  UserLoginData,
   UserRegistrationData,
 } from "../../interfaces";
 import AuthService from "../../services/auth/auth.service";
+
+/**
+ * Declrative merging
+ */
+declare module "express-session" {
+  interface Session {
+    userId: string;
+  }
+}
 
 class AuthController {
   private authService;
@@ -31,7 +41,6 @@ class AuthController {
       email: Joi.string()
         .email()
         .max(128)
-        .lowercase()
         .trim()
         .required(),
       password: Joi.string()
@@ -41,6 +50,40 @@ class AuthController {
     });
 
     return schema.validate(userRegistrationData);
+  };
+
+  /**
+   *
+   * @param userRegistrationData - email, password
+   * @returns ValidationResult with error message
+   */
+  private validateLoginData = (
+    userRegistrationData: UserLoginData,
+  ): ValidationResult => {
+    const schema = Joi.object({
+      email: Joi.string()
+        .email()
+        .max(128)
+        .trim()
+        .required(),
+      password: Joi.string()
+        .min(6)
+        .max(256)
+        .required(),
+    });
+
+    return schema.validate(userRegistrationData);
+  };
+
+  /**
+   * This function helps in attesting "sid" cookie that tells the session-ID as it is stored in redis cache
+   * Sid is also attached to every request thereafter. Hence, persisting the login
+   * @param req - Express request
+   * @param id - userId
+   */
+  private loginUserByPersistingCache = (req: Request, id: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    req.session!.userId = id; //setting userId to be equal to id
   };
 
   /**
@@ -71,6 +114,10 @@ class AuthController {
         const id = await this.authService.register(
           userRegistrationData,
         );
+
+        //logging-in the user in after the user has registered
+        this.loginUserByPersistingCache(req, id);
+
         return res.status(201).json({
           error: null,
           data: {
@@ -86,7 +133,7 @@ class AuthController {
         /**
          * Using the response code recieved from AuthService
          */
-        return res.status(+code).json({
+        return res.status(code | 503).json({
           error,
           data: null,
         } as GeneralApiResponse);
@@ -98,6 +145,43 @@ class AuthController {
       } as GeneralApiResponse);
     }
   };
+
+  public login = async (req: Request, res: Response) => {
+    const userLoginData: UserLoginData = req.body;
+
+    const validationError:
+      | ValidationError
+      | null
+      | undefined = this.validateLoginData(userLoginData).error;
+
+    if (!validationError) {
+      try {
+        await this.authService.login(userLoginData);
+
+        //--login logic--
+      } catch (serviceError) {
+        const {
+          error,
+          code,
+        }: ServiceError = serviceError as ServiceError;
+
+        /**
+         * Using the response code recieved from AuthService
+         */
+        return res.status(code | 503).json({
+          error,
+          data: null,
+        } as GeneralApiResponse);
+      }
+    } else {
+      return res.status(403).json({
+        error: validationError.message,
+        data: null,
+      } as GeneralApiResponse);
+    }
+  };
+
+  public isLoggedIn = (req: Request) => !!req.session.userId; //if the userId is not present
 }
 
 export default AuthController;

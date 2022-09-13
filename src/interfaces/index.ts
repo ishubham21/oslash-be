@@ -9,7 +9,18 @@ export type UserRegistrationData = {
   password: string;
 };
 
-export interface ServiceError {
+export type UserLoginData = {
+  email: string;
+  password: string;
+};
+
+export type ServiceError = {
   error: null | unknown | string | undefined;
   code: number;
-}
+};
+
+export type UserWithoutPassword = {
+  id: string;
+  name: string;
+  
+};

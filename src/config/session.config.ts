@@ -13,7 +13,7 @@ export const SESSION_OPTIONS: SessionOptions = {
   name: SESSION_NAME,
   cookie: {
     maxAge: +SESSION_TIMEOUT,
-    secure: true,
+    secure: process.env.NODE_ENV === "production",
   },
   resave: false,
   saveUninitialized: false,

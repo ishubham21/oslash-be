@@ -13,9 +13,10 @@
     "lint:fix": "eslint \"**/*.{js,ts}\" --fix",
     "kill:p": "sudo kill -9 `sudo lsof -t -i:5432`",
     "kill:r": "sudo kill -9 `sudo lsof -t -i:6379`",
+    "kill:s": "sudo kill -9 `sudo lsof -t -i:4000`",
     "redis:down": "sudo service redis-server stop",
     "compose:db-up": "sudo docker-compose -f docker-compose.db.yml up -d",
-    "compose:db-down": "sudo docker-compose -f docker-compose.db.yml down --volumes",
+    "compose:db-down": "sudo docker-compose -f docker-compose.db.yml down",
     "compose:up": "sudo docker-compose up -d",
     "compose:down": "sudo docker-compose down --volumes",
     "docker:build": "sudo docker build -t sih-backend .",
@@ -27,7 +28,8 @@
     "db:init": "npm run db:migrate && npm run db:deploy",
     "db:reset": "npx prisma migrate reset",
     "prisma:generate": "npx prisma generate",
-    "prisma:studio": "npx prisma studio"
+    "prisma:studio": "npx prisma studio",
+    "redis:cli": "sudo docker exec -t -i oslash-be-cache-1 /bin/sh"
   },
   "keywords": [],
   "author": "ishubham21",

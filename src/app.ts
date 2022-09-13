@@ -1,4 +1,9 @@
-import express, { Application } from "express";
+import express, {
+  Application,
+  NextFunction,
+  Request,
+  Response,
+} from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
@@ -24,16 +29,17 @@ class App {
 
   constructor () {
     this.app = express();
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     this.port = +PORT! || 4000;
 
     //configuring redis and fetching the value of redisStore that is newly configured with express-session
     this.redisStore = new ConfigureRedis().redisStore;
     this.userAuthRoute = new AuthRoute();
 
+    this.configureExpressSessionMiddleware(); //must remain on TOP
     this.initializeMiddlewares();
     this.initializeRoutes();
     this.handleMiscRoutes();
-    this.configureExpressSessionMiddleware();
   }
 
   public listen = (): void => {
@@ -81,7 +87,7 @@ class App {
     /**
      * Base route - to check API health
      */
-    this.app.get("/", (req, res) => {
+    this.app.get("/", (req: Request, res: Response) => {
       res.status(200).json({
         error: null,
         data: {
@@ -93,12 +99,21 @@ class App {
     /**
      * Handling all undefined routes
      */
-    this.app.all("*", (req, res) => {
+    this.app.all("*", (req: Request, res: Response) => {
       res.status(404).json({
         error: "Requested route doesn't exist - 404",
         data: null,
       } as GeneralApiResponse);
     });
+
+    this.app.use(
+      (req: Request, res: Response, next: NextFunction) => {
+        res.status(500).json({
+          error: "Something broke on our end!",
+          data: null,
+        } as GeneralApiResponse);
+      },
+    );
   };
 
   /**
