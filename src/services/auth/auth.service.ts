@@ -1,7 +1,7 @@
 import { genSalt } from "bcryptjs";
 import { compare, hash } from "bcrypt";
 import { PrismaClient, User } from "@prisma/client";
-import { UserRegistrationData } from "../../interfaces";
+import { ServiceError, UserRegistrationData } from "../../interfaces";
 
 class AuthService {
   private prisma: PrismaClient;
@@ -41,7 +41,9 @@ class AuthService {
    * @param email - user email
    * @returns - Promise that either resolves to the user data or null
    */
-  private getUserFromEmail = (email: string) => {
+  private getUserFromEmail = (
+    email: string,
+  ): Promise<User | null> => {
     return new Promise<User | null>((resolve, reject) => {
       /**
        * IIFE to prevent the application from let go of errors
@@ -61,10 +63,15 @@ class AuthService {
     });
   };
 
-  public register = (data: UserRegistrationData) => {
+  /**
+   *
+   * @param data - name, email, password recieved in request body
+   * @returns
+   */
+  public register = (data: UserRegistrationData): Promise<string> => {
     const { email } = data;
 
-    return new Promise<unknown | void>((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
       /**
        * async IIFE - to escape promise executor function being async
        * this is necessary to catch errors
@@ -76,21 +83,30 @@ class AuthService {
           /**
            * If the user with the same email exists, do not register the user
            */
-          if (!user) {
+          if (user) {
             return reject({
               error: "User with this email already exists",
               code: 409,
-            });
+            } as ServiceError);
           }
 
-          //register user here
-          //encrypt the password
-          //save the user
+          /**
+           * Encrypting the password before saving it in the DB
+           */
+          data.password = await this.encryptPassword(data.password);
+
+          /**
+           * Creating a new user with the data provided in the API request
+           */
+          const { id } = await this.prisma.user.create({
+            data,
+          });
+          return resolve(id);
         } catch (error) {
           return reject({
             error,
             code: 503,
-          });
+          } as ServiceError);
         }
       })();
     });

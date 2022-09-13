@@ -43,8 +43,16 @@ class AuthController {
     return schema.validate(userRegistrationData);
   };
 
+  /**
+   *
+   * @param req Express request
+   * @param res Express response
+   * @returns res.status.json({...})
+   */
   public register = async (req: Request, res: Response) => {
-    //validating user registration data and sanitizing the req body
+    /**
+     * validating user registration data and sanitizing the req body
+     */
     const userRegistrationData: UserRegistrationData = req.body;
 
     const validationError:
@@ -54,15 +62,31 @@ class AuthController {
       userRegistrationData,
     ).error;
 
+    /**
+     * If there are no validation errors, register the user
+     * Else, notify via API response
+     */
     if (!validationError) {
       try {
-        await this.authService.register(userRegistrationData);
+        const id = await this.authService.register(
+          userRegistrationData,
+        );
+        return res.status(201).json({
+          error: null,
+          data: {
+            userId: id,
+          },
+        });
       } catch (serviceError) {
         const {
           error,
           code,
         }: ServiceError = serviceError as ServiceError;
-        return res.status(code).json({
+
+        /**
+         * Using the response code recieved from AuthService
+         */
+        return res.status(+code).json({
           error,
           data: null,
         } as GeneralApiResponse);
