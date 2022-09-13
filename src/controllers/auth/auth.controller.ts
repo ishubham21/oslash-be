@@ -5,6 +5,7 @@ import {
   ServiceError,
   UserLoginData,
   UserRegistrationData,
+  UserWithoutPassword,
 } from "../../interfaces";
 import AuthService from "../../services/auth/auth.service";
 
@@ -156,9 +157,12 @@ class AuthController {
 
     if (!validationError) {
       try {
-        await this.authService.login(userLoginData);
+        const user: UserWithoutPassword = await this.authService.login(
+          userLoginData,
+        );
 
         //--login logic--
+        this.loginUserByPersistingCache(req, user.id);
       } catch (serviceError) {
         const {
           error,

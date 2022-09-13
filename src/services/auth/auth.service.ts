@@ -5,6 +5,7 @@ import {
   ServiceError,
   UserLoginData,
   UserRegistrationData,
+  UserWithoutPassword,
 } from "../../interfaces";
 
 class AuthService {
@@ -47,6 +48,7 @@ class AuthService {
    */
   private getUserFromEmail = (
     email: string,
+    includeShortcuts: boolean = false,
   ): Promise<User | null> => {
     return new Promise<User | null>((resolve, reject) => {
       /**
@@ -57,6 +59,9 @@ class AuthService {
           const user = await this.prisma.user.findUnique({
             where: {
               email,
+            },
+            include: {
+              shortcuts: includeShortcuts,
             },
           });
           return resolve(user);
@@ -73,8 +78,6 @@ class AuthService {
    * @returns - userId of the registered user
    */
   public register = (data: UserRegistrationData): Promise<string> => {
-    const { email } = data;
-
     return new Promise<string>((resolve, reject) => {
       /**
        * async IIFE - to escape promise executor function being async
@@ -82,7 +85,9 @@ class AuthService {
        */
       (async () => {
         try {
-          const user = await this.getUserFromEmail(email);
+          const user: User | null = await this.getUserFromEmail(
+            data.email,
+          );
 
           /**
            * If the user with the same email exists, do not register the user
@@ -114,12 +119,14 @@ class AuthService {
   };
 
   public login = (data: UserLoginData) => {
-    const { email, password } = data;
-
-    return new Promise<string>((resolve, reject) => {
+    return new Promise<UserWithoutPassword>((resolve, reject) => {
       (async () => {
         try {
-          const user = await this.getUserFromEmail(email);
+          const { email } = data;
+          const user: User | null = await this.getUserFromEmail(
+            email,
+            true,
+          );
 
           /**
            * If the user with the same email exists, do not register the user
@@ -132,7 +139,7 @@ class AuthService {
           }
 
           //password matching
-          const userPassword = password,
+          const userPassword = data.password,
             dbPassword = user.password;
 
           if (
@@ -143,8 +150,13 @@ class AuthService {
               code: 401,
             });
           }
+
+          //extracting password from the user
+          // eslint-disable-next-line prefer-const
+          let { password, ...userWithoutPassword } = user;
+          password = (null as unknown) as string;
           
-          resolve("ok");  //sending back the user data
+          resolve(userWithoutPassword); //sending back the user data
         } catch (error) {
           return reject({
             error,

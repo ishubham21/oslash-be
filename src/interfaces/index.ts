@@ -1,3 +1,5 @@
+import { Shortcut } from "@prisma/client";
+
 export type GeneralApiResponse = {
   error: string | null | unknown;
   data: object | string | null | any;
@@ -22,5 +24,8 @@ export type ServiceError = {
 export type UserWithoutPassword = {
   id: string;
   name: string;
-  
+  email: string;
+  createdAt: Date;
+  updatedAt: Date;
+  shortcuts?: Shortcut;
 };
