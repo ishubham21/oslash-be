@@ -15,7 +15,7 @@ import AuthService from "../../services/auth/auth.service";
  */
 declare module "express-session" {
   interface Session {
-    userId: string;
+    oslashBeUserId: string;
   }
 }
 
@@ -85,7 +85,7 @@ class AuthController {
    */
   private loginUserByPersistingCache = (req: Request, id: string) => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    req.session!.userId = id; //setting userId to be equal to id
+    req.session!.oslashBeUserId = id; //setting userId to be equal to id
   };
 
   /**
@@ -175,7 +175,7 @@ class AuthController {
           data: user,
           error: null,
         } as GeneralApiResponse);
-        
+
         //--request response--
       } catch (serviceError) {
         const {
@@ -229,7 +229,8 @@ class AuthController {
     });
   };
 
-  public isLoggedIn = (req: Request) => !!req.session.userId; //if the userId is not present
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  public isLoggedIn = (req: Request) => !!req.session!.oslashBeUserId; //if the userId is not present
 }
 
 export default AuthController;

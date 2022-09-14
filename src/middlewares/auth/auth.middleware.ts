@@ -21,6 +21,7 @@ export const isLoggedIn = (
   next();
 };
 
+//middleware for authenticated requests
 export const notLoggedIn = (
   req: Request,
   res: Response,
