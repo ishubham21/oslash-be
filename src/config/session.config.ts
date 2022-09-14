@@ -2,7 +2,7 @@ import { SessionOptions } from "express-session";
 
 const SIX_HOURS = 1000 * 60 * 60 * 6;
 
-const {
+export const {
   SESSION_SECRET = "secret",
   SESSION_NAME = "sid",
   SESSION_TIMEOUT = SIX_HOURS,

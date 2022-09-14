@@ -14,7 +14,8 @@ class ConfigureRedis {
     //configure a new redis client from ioredis
     this.redisClient = new Redis(REDIS_OPTIONS);
 
-    this.redisClient.on("error", () => {
+    this.redisClient.on("error", error => {
+      console.log(error);
       throw "Error connecting with redis client";
     });
   }

@@ -1,7 +1,10 @@
 import { Router, Request, Response } from "express";
 import AuthController from "../../controllers/auth/auth.controller";
 import { GeneralApiResponse } from "../../interfaces";
-import { loginStatus } from "../../middlewares/auth/auth.middleware";
+import {
+  isLoggedIn,
+  notLoggedIn,
+} from "../../middlewares/auth/auth.middleware";
 
 class AuthRoute {
   private path: string = "/";
@@ -28,7 +31,7 @@ class AuthRoute {
     //post route to register the user
     this.router.post(
       `${this.path}register`,
-      loginStatus,
+      isLoggedIn,
       (req: Request, res: Response) => {
         //request forwarding to handle the request elements in the AuthController
         this.authController.register(req, res);
@@ -38,11 +41,28 @@ class AuthRoute {
     //post route to login the user
     this.router.post(
       `${this.path}login`,
-      loginStatus, //attaching a middleware with the login request that would prevent user from creating multiple sessions
+      isLoggedIn, //attaching a middleware with the login request that would prevent user from creating multiple sessions
       (req: Request, res: Response) => {
         //request forwarding to handle the request elements in the AuthController
 
         this.authController.login(req, res);
+      },
+    );
+
+    //post route to logout the user
+    this.router.post(
+      `${this.path}logout`,
+      notLoggedIn, //attaching a middleware with the logout that would prevent logout if not logged-in
+      async (req: Request, res: Response) => {
+        //request forwarding to handle the request elements in the AuthController
+        try {
+          this.authController.logout(req, res);
+        } catch (error) {
+          return res.status(503).json({
+            error,
+            data: null,
+          } as GeneralApiResponse);
+        }
       },
     );
   };

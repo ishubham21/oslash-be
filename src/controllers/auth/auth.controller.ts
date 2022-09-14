@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Joi, { ValidationError, ValidationResult } from "joi";
+import { SESSION_NAME } from "../../config";
 import {
   GeneralApiResponse,
   ServiceError,
@@ -147,6 +148,12 @@ class AuthController {
     }
   };
 
+  /**
+   *
+   * @param req Express request
+   * @param res Express response
+   * @returns res.status.json - message to be sent back from the API
+   */
   public login = async (req: Request, res: Response) => {
     const userLoginData: UserLoginData = req.body;
 
@@ -163,6 +170,13 @@ class AuthController {
 
         //--login logic--
         this.loginUserByPersistingCache(req, user.id);
+
+        return res.status(200).json({
+          data: user,
+          error: null,
+        } as GeneralApiResponse);
+        
+        //--request response--
       } catch (serviceError) {
         const {
           error,
@@ -183,6 +197,36 @@ class AuthController {
         data: null,
       } as GeneralApiResponse);
     }
+  };
+
+  /**
+   *
+   * @param req Express request
+   * @param res Express session
+   * @returns A promise to tell if the cookie has been cleared or not
+   */
+  public logout = (req: Request, res: Response) => {
+    /**
+     * Deleting the session and thus, the corresponding cookie
+     */
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    req.session!.destroy(err => {
+      if (!err) {
+        res.clearCookie(SESSION_NAME);
+        /**
+         * Sending back the response if the user is successfully logged-out
+         */
+        return res.status(200).json({
+          data: "Logged-out successfully",
+          error: null,
+        } as GeneralApiResponse);
+      }
+
+      return res.status(503).json({
+        error: "We were not able to log you out",
+        data: null,
+      } as GeneralApiResponse);
+    });
   };
 
   public isLoggedIn = (req: Request) => !!req.session.userId; //if the userId is not present
