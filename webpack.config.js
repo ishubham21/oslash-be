@@ -25,7 +25,7 @@ module.exports = {
     pathinfo: false,
   },
 
-  devtool: "source-map",
+  devtool: "inline-source-map",
 
   module: {
     rules: [
