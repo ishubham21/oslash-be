@@ -14,6 +14,7 @@ import { NODE_ENV, PORT, SESSION_OPTIONS } from "./config";
 import ConfigureRedis from "./services/redis/redis.service";
 import AuthRoute from "./routes/auth/auth.route";
 import { GeneralApiResponse } from "./interfaces";
+import ShortcutRoute from "./routes/shortcuts/shortcuts.route";
 
 class App {
   private app: Application;
@@ -25,7 +26,8 @@ class App {
     "access.log",
   );
   private redisStore;
-  private userAuthRoute;
+  private userAuthRoute: AuthRoute;
+  private shortcutRoute: ShortcutRoute;
 
   constructor () {
     this.app = express();
@@ -35,6 +37,7 @@ class App {
     //configuring redis and fetching the value of redisStore that is newly configured with express-session
     this.redisStore = new ConfigureRedis().redisStore;
     this.userAuthRoute = new AuthRoute();
+    this.shortcutRoute = new ShortcutRoute();
 
     this.configureExpressSessionMiddleware(); //must remain on TOP
     this.initializeMiddlewares();
@@ -81,6 +84,7 @@ class App {
 
   private initializeRoutes = (): void => {
     this.app.use("/auth", this.userAuthRoute.router);
+    this.app.use("/shortcut", this.shortcutRoute.router);
   };
 
   private handleMiscRoutes = (): void => {

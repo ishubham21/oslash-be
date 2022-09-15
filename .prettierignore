@@ -1,4 +1,4 @@
 /public
 /coverage
 /dist
-jest.confi.js
+jest.config.js

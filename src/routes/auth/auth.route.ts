@@ -24,7 +24,7 @@ class AuthRoute {
     this.router.get(`${this.path}`, (req: Request, res: Response) => {
       res.status(200).json({
         error: null,
-        data: "User auth route - healthy",
+        data: "User auth route healthy",
       } as GeneralApiResponse);
     });
 
@@ -53,7 +53,7 @@ class AuthRoute {
     this.router.post(
       `${this.path}logout`,
       notLoggedIn, //attaching a middleware with the logout that would prevent logout if not logged-in
-      async (req: Request, res: Response) => {
+      (req: Request, res: Response) => {
         //request forwarding to handle the request elements in the AuthController
         try {
           this.authController.logout(req, res);

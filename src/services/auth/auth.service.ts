@@ -7,12 +7,15 @@ import {
   UserRegistrationData,
   UserWithoutPassword,
 } from "../../interfaces";
+import UserService from "../user/user.service";
 
 class AuthService {
   private prisma: PrismaClient;
+  private userService: UserService;
 
   constructor () {
     this.prisma = new PrismaClient();
+    this.userService = new UserService();
   }
 
   /**
@@ -43,37 +46,6 @@ class AuthService {
 
   /**
    *
-   * @param email - user email
-   * @returns - Promise that either resolves to the user data or null
-   */
-  private getUserFromEmail = (
-    email: string,
-    includeShortcuts: boolean = false,
-  ): Promise<User | null> => {
-    return new Promise<User | null>((resolve, reject) => {
-      /**
-       * IIFE to prevent the application from let go of errors
-       */
-      (async () => {
-        try {
-          const user = await this.prisma.user.findUnique({
-            where: {
-              email,
-            },
-            include: {
-              shortcuts: includeShortcuts,
-            },
-          });
-          return resolve(user);
-        } catch (error) {
-          return reject(error);
-        }
-      })();
-    });
-  };
-
-  /**
-   *
    * @param data - name, email, password recieved in request body
    * @returns - userId of the registered user
    */
@@ -85,7 +57,7 @@ class AuthService {
        */
       (async () => {
         try {
-          const user: User | null = await this.getUserFromEmail(
+          const user: User | null = await this.userService.getUserFromEmail(
             data.email,
           );
 
@@ -118,12 +90,17 @@ class AuthService {
     });
   };
 
+  /**
+   *
+   * @param data email, password
+   * @returns Promise with resolve value of UserWithoutPassword
+   */
   public login = (data: UserLoginData) => {
     return new Promise<UserWithoutPassword>((resolve, reject) => {
       (async () => {
         try {
           const { email } = data;
-          const user: User | null = await this.getUserFromEmail(
+          const user: User | null = await this.userService.getUserFromEmail(
             email,
             true,
           );
@@ -138,7 +115,9 @@ class AuthService {
             } as ServiceError);
           }
 
-          //password matching
+          /**
+           * Comparing the password for equality
+           */
           const userPassword = data.password,
             dbPassword = user.password;
 
@@ -155,7 +134,7 @@ class AuthService {
           // eslint-disable-next-line prefer-const
           let { password, ...userWithoutPassword } = user;
           password = (null as unknown) as string;
-          
+
           resolve(userWithoutPassword); //sending back the user data
         } catch (error) {
           return reject({

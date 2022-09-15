@@ -29,3 +29,13 @@ export type UserWithoutPassword = {
   updatedAt: Date;
   shortcuts?: Shortcut;
 };
+
+export type ShortcutVisibility = "Workspace" | "Private";
+
+export type ShortcutData = {
+  shortlink: string;
+  url: string;
+  visibility: ShortcutVisibility;
+  description?: string;
+  tags: string[]
+}; 
