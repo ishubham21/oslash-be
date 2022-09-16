@@ -1,5 +1,10 @@
 import { PrismaClient, Shortcut } from "@prisma/client";
-import { ServiceError, ShortcutData } from "../../interfaces";
+import {
+  ServiceError,
+  ShortcutData,
+  SortingOptions,
+  SortingOrders,
+} from "../../interfaces";
 import prismaClient from "../../utils/prisma.util";
 
 class ShortcutService {
@@ -67,7 +72,7 @@ class ShortcutService {
 
           if (shortcutFromShortlink || shortcutFromUrl) {
             return reject({
-              error: "This shortcut already exists",
+              error: "This shortcut or url already exists",
               code: 406,
             } as ServiceError);
           }
@@ -99,6 +104,60 @@ class ShortcutService {
         }
       })();
     });
+  };
+
+  /**
+   * List all the user shortcuts with the optional sorting filters
+   * @param userId
+   * @param sortBy
+   * @param order
+   */
+  public listShortcuts = (
+    userId: string,
+    sortBy: SortingOptions,
+    orderBy: SortingOrders = "asc",
+  ) => {
+    return new Promise<Shortcut[] | [] | null>((resolve, reject) => {
+      (async () => {
+        try {
+          /**
+           * Sorting based on the options provided
+           */
+          const shortcuts:
+            | Shortcut[]
+            | [] = await this.prisma.shortcut.findMany({
+            where: {
+              userId,
+            },
+            orderBy: {
+              [sortBy]: orderBy,
+            },
+          });
+
+          if (shortcuts.length === 0) {
+            return reject({
+              error: "No shortcuts for this user could be found",
+              code: 404,
+            } as ServiceError);
+          }
+
+          return resolve(shortcuts);
+        } catch (error) {
+          return reject({
+            error,
+            code: 503,
+          } as ServiceError);
+        }
+      })();
+    });
+  };
+
+  public searchShortcuts = () => {
+    //
+  };
+
+  public deleteShortcut = () => {
+    //
   };
 }
 

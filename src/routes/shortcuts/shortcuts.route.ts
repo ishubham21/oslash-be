@@ -30,6 +30,14 @@ class ShortcutRoute {
         this.shortcutContoller.addShortcut(req, res);
       },
     );
+
+    this.router.get(
+      `${this.path}list`,
+      notLoggedIn,
+      (req: Request, res: Response) => {
+        this.shortcutContoller.listShortcuts(req, res);
+      },
+    );
   };
 }
 

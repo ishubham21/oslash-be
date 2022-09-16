@@ -37,5 +37,18 @@ export type ShortcutData = {
   url: string;
   visibility: ShortcutVisibility;
   description?: string;
-  tags: string[]
-}; 
+  tags: string[];
+};
+
+export type SortingOrders = "asc" | "desc";
+
+export type SortingOptions =
+  | "shortlink"
+  | "createdAt"
+  | "updatedAt"
+  | "visits";
+
+export type ListSortingQueries = {
+  sortBy?: SortingOptions | undefined | null;
+  orderBy?: SortingOrders | undefined | null;
+};

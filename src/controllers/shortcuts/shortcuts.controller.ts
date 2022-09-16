@@ -1,7 +1,9 @@
+import { Shortcut } from "@prisma/client";
 import { Request, Response } from "express";
 import Joi, { ValidationError, ValidationResult } from "joi";
 import {
   GeneralApiResponse,
+  ListSortingQueries,
   ServiceError,
   ShortcutData,
   ShortcutVisibility,
@@ -78,6 +80,13 @@ class ShortcutController {
       | null
       | undefined = this.validateShortcutData(shortcutData).error;
 
+    if (validationError) {
+      return res.status(403).json({
+        error: validationError.message,
+        data: null,
+      } as GeneralApiResponse);
+    }
+
     /**
      * If URL is not WHATWG compliant, we return
      */
@@ -88,58 +97,137 @@ class ShortcutController {
       } as GeneralApiResponse);
     }
 
-    if (!validationError) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const userId: string = req.session!.oslashBeUserId;
-      if (!userId) {
-        return res.status(406).json({
-          error: "You must be logged-in to access this resource",
-          data: null,
-        } as GeneralApiResponse);
-      }
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const userId: string = req.session!.oslashBeUserId;
+    if (!userId) {
+      return res.status(406).json({
+        error: "You must be logged-in to access this resource",
+        data: null,
+      } as GeneralApiResponse);
+    }
 
-      try {
-        /**
-         * Trying to add the shortcut in the DB
-         */
-        const shorturl = await this.shortcutService.addShortcut(
-          shortcutData,
-          userId,
-        );
+    try {
+      /**
+       * Trying to add the shortcut in the DB
+       */
+      const shorturl = await this.shortcutService.addShortcut(
+        shortcutData,
+        userId,
+      );
 
-        return res.status(201).json({
-          error: null,
-          data: {
-            message: `${shorturl} has been added successfully`,
-          },
-        } as GeneralApiResponse);
-      } catch (serviceError) {
-        const {
-          error,
-          code,
-        }: ServiceError = serviceError as ServiceError;
+      return res.status(201).json({
+        error: null,
+        data: {
+          message: `${shorturl} has been added successfully`,
+        },
+      } as GeneralApiResponse);
+    } catch (serviceError) {
+      const {
+        error,
+        code,
+      }: ServiceError = serviceError as ServiceError;
 
-        /**
-         * Using the response code recieved from AuthService
-         */
-        return res.status(code | 503).json({
-          error,
-          data: null,
-        } as GeneralApiResponse);
-      }
-    } else {
-      return res.status(403).json({
-        error: validationError.message,
+      /**
+       * Using the response code recieved from ShortcutService
+       */
+      return res.status(code | 503).json({
+        error,
         data: null,
       } as GeneralApiResponse);
     }
   };
 
-  //list shortcuts - with optional sorting filters
+  public listShortcuts = async (req: Request, res: Response) => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const userId: string = req.session!.oslashBeUserId;
+
+    if (!userId) {
+      return res.status(403).json({
+        error: "You are not authenticated to use this resource",
+        data: null,
+      } as GeneralApiResponse);
+    }
+
+    const reqQueries: ListSortingQueries = req.query;
+    let { orderBy, sortBy } = reqQueries;
+
+    /**
+     * if only order by is present
+     */
+    if (orderBy && !sortBy) {
+      return res.status(406).json({
+        error: "Please make sure to use sortBy query with orderBy",
+        data: null,
+      } as GeneralApiResponse);
+    }
+
+    /**
+     * Defaulting it to shortlink ascending order
+     */
+    if (!sortBy) {
+      sortBy = "shortlink";
+    }
+    if (!orderBy) {
+      orderBy = "asc";
+    }
+
+    /**
+     * Checking for the correctness of queries
+     */
+    const allowedSortByValues = [
+      "shortlink",
+      "createdAt",
+      "updatedAt",
+      "visits",
+    ];
+    if (!allowedSortByValues.includes(sortBy)) {
+      return res.status(403).json({
+        error:
+          'Allowed values for sortBy are -> "shortlink", "createdAt", "updatedAt", "visits"',
+        data: null,
+      } as GeneralApiResponse);
+    }
+
+    const allowedOrderByValues = ["asc", "desc"];
+    if (!allowedOrderByValues.includes(sortBy)) {
+      return res.status(403).json({
+        error: 'Allowed values for sortBy are -> "asc" or "desc"',
+        data: null,
+      } as GeneralApiResponse);
+    }
+
+    try {
+      const shortcuts:
+        | Shortcut[]
+        | []
+        | null = await this.shortcutService.listShortcuts(
+        userId,
+        sortBy,
+        orderBy,
+      );
+
+      return res.status(200).json({
+        data: {
+          shortcuts,
+        },
+        error: null,
+      } as GeneralApiResponse);
+    } catch (serviceError) {
+      const {
+        error,
+        code,
+      }: ServiceError = serviceError as ServiceError;
+
+      return res.status(code | 503).json({
+        error,
+        data: null,
+      } as GeneralApiResponse);
+    }
+  };
 
   //delete shortcut
 
-  //search shortcuts - based on shortlink, tags, url, etc
+  //search shortcuts - based on shortlink, tags, url, etc => latest updated, visits in a range, visibility
 
   // o/shortlink => should redirect the user to the link they have provided => also increment the visits here
 }
