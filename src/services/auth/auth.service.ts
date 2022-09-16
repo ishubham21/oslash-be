@@ -8,13 +8,14 @@ import {
   UserWithoutPassword,
 } from "../../interfaces";
 import UserService from "../user/user.service";
+import prismaClient from "../../utils/prisma.util";
 
 class AuthService {
   private prisma: PrismaClient;
   private userService: UserService;
 
   constructor () {
-    this.prisma = new PrismaClient();
+    this.prisma = prismaClient;
     this.userService = new UserService();
   }
 
@@ -102,7 +103,7 @@ class AuthService {
           const { email } = data;
           const user: User | null = await this.userService.getUserFromEmail(
             email,
-            true,
+            false,
           );
 
           /**

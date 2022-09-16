@@ -125,7 +125,7 @@ class AuthController {
           data: {
             userId: id,
           },
-        });
+        } as GeneralApiResponse);
       } catch (serviceError) {
         const {
           error,

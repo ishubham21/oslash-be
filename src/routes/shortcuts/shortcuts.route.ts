@@ -1,18 +1,16 @@
-import { PrismaClient } from "@prisma/client";
+
 import { Request, Response, Router } from "express";
 import ShortcutController from "../../controllers/shortcuts/shortcuts.controller";
 import { GeneralApiResponse } from "../../interfaces";
 import { notLoggedIn } from "../../middlewares/auth/auth.middleware";
 
 class ShortcutRoute {
-  private prisma: PrismaClient;
   private shortcutContoller: ShortcutController;
   private path: string = "/";
   public router: Router;
 
   constructor () {
     this.router = Router();
-    this.prisma = new PrismaClient();
     this.shortcutContoller = new ShortcutController();
     this.initializeRoutes();
   }

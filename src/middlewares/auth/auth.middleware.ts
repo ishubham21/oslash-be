@@ -9,8 +9,10 @@ export const isLoggedIn = (
 ) => {
   const authController = new AuthController();
 
-  //if the cookie is found in the request, we return this response
-  //if a cookie is already attached to the request, trigger this
+  /**
+   * If a cookie is already attached to the request, that means
+   * the user is already logged in
+   */
   if (authController.isLoggedIn(req)) {
     return res.status(406).json({
       error: "You are already logged-in",
@@ -31,7 +33,7 @@ export const notLoggedIn = (
 
   if (!authController.isLoggedIn(req)) {
     return res.status(406).json({
-      error: "You are not logged-in",
+      error: "You must be logged-in to access this resource",
       data: null,
     } as GeneralApiResponse);
   }

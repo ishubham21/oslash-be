@@ -49,8 +49,8 @@ class AuthRoute {
       },
     );
 
-    //post route to logout the user
-    this.router.post(
+    //get route to logout the user
+    this.router.get(
       `${this.path}logout`,
       notLoggedIn, //attaching a middleware with the logout that would prevent logout if not logged-in
       (req: Request, res: Response) => {

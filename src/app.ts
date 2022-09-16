@@ -15,6 +15,7 @@ import ConfigureRedis from "./services/redis/redis.service";
 import AuthRoute from "./routes/auth/auth.route";
 import { GeneralApiResponse } from "./interfaces";
 import ShortcutRoute from "./routes/shortcuts/shortcuts.route";
+import UserRoute from "./routes/user/user.route";
 
 class App {
   private app: Application;
@@ -28,6 +29,7 @@ class App {
   private redisStore;
   private userAuthRoute: AuthRoute;
   private shortcutRoute: ShortcutRoute;
+  private userRoute: UserRoute;
 
   constructor () {
     this.app = express();
@@ -38,6 +40,7 @@ class App {
     this.redisStore = new ConfigureRedis().redisStore;
     this.userAuthRoute = new AuthRoute();
     this.shortcutRoute = new ShortcutRoute();
+    this.userRoute = new UserRoute();
 
     this.configureExpressSessionMiddleware(); //must remain on TOP
     this.initializeMiddlewares();
@@ -84,6 +87,7 @@ class App {
 
   private initializeRoutes = (): void => {
     this.app.use("/auth", this.userAuthRoute.router);
+    this.app.use("/user", this.userRoute.router);
     this.app.use("/shortcut", this.shortcutRoute.router);
   };
 
