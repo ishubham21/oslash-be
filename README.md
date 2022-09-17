@@ -19,13 +19,12 @@ Unique Points -
 - Unit tests in Jest
 - Aesc and Desc **sorting based on shortlink, createdAt, updatedAt, no of visits (shortlink hits)**
 - Shortcut visbility option (Workspace/Private): Defaults to Workspace
+- List parameters can be combined to create a combination of 8 different requests and sorting parameters
+- Search parameters can be combined to form over 6! (6 factorial) combinations to search.
 
 #### Postman Collection can be found [here](https://www.postman.com/dark-resonance-160564/workspace/646a5acd-0790-45a7-a1d6-ab3b78e1452e/collection/13812176-1c6429c9-f7de-4805-a12a-c01963df2d9a?action=share&creator=13812176)
 
 #### Todo
 
-- [] Postman Documentation
+- [] Readme Documentation
 - [] Tests
-- [] Add production env variables (postgresURL, redisHOST) in vercel
-- [] access shortcut from + increment visit count on access
-- [] write a seed script to seed dummy data
