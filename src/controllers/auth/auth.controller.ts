@@ -141,7 +141,7 @@ class AuthController {
       /**
        * Using the response code recieved from AuthService
        */
-      return res.status(code | 503).json({
+      return res.status(code).json({
         error,
         data: null,
       } as GeneralApiResponse);
@@ -186,7 +186,7 @@ class AuthController {
         /**
          * Using the response code recieved from AuthService
          */
-        return res.status(code | 503).json({
+        return res.status(code).json({
           error,
           data: null,
         } as GeneralApiResponse);

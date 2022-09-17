@@ -24,8 +24,8 @@ Unique Points -
 
 #### Todo
 
--[] Postman Documentation
--[] Tests
--[] Add production env variables (postgresURL, redisHOST) in vercel
--[] access shortcut from + increment visit count on access
--[] write a seed script to seed dummy data
+- [] Postman Documentation
+- [] Tests
+- [] Add production env variables (postgresURL, redisHOST) in vercel
+- [] access shortcut from + increment visit count on access
+- [] write a seed script to seed dummy data

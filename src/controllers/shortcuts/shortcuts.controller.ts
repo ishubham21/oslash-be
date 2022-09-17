@@ -19,9 +19,9 @@ class ShortcutController {
   }
 
   /**
-   * 
-   * @param shortcutData 
-   * @returns 
+   *
+   * @param shortcutData
+   * @returns
    */
   private validateShortcutData = (
     shortcutData: ShortcutData,
@@ -47,9 +47,9 @@ class ShortcutController {
   };
 
   /**
-   * 
-   * @param url 
-   * @returns 
+   *
+   * @param url
+   * @returns
    */
   private isUrlWhatwgCompliant = (url: string): boolean => {
     const pattern: RegExp = new RegExp(
@@ -141,7 +141,7 @@ class ShortcutController {
       /**
        * Using the response code recieved from ShortcutService
        */
-      return res.status(code | 503).json({
+      return res.status(code).json({
         error,
         data: null,
       } as GeneralApiResponse);
@@ -149,10 +149,10 @@ class ShortcutController {
   };
 
   /**
-   * 
-   * @param req 
-   * @param res 
-   * @returns 
+   *
+   * @param req
+   * @param res
+   * @returns
    */
   public listShortcuts = async (req: Request, res: Response) => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -235,7 +235,7 @@ class ShortcutController {
         code,
       }: ServiceError = serviceError as ServiceError;
 
-      return res.status(code | 503).json({
+      return res.status(code).json({
         error,
         data: null,
       } as GeneralApiResponse);
@@ -243,10 +243,10 @@ class ShortcutController {
   };
 
   /**
-   * 
-   * @param req 
-   * @param res 
-   * @returns 
+   *
+   * @param req
+   * @param res
+   * @returns
    */
   public deleteShortcut = async (req: Request, res: Response) => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -281,18 +281,35 @@ class ShortcutController {
         code,
       }: ServiceError = serviceError as ServiceError;
 
-      return res.status(code | 503).json({
+      return res.status(code).json({
         error,
         data: null,
       } as GeneralApiResponse);
     }
   };
 
+  private validateSearchBody = (
+    searchOptions: SearchShortcutOptions,
+  ): ValidationResult => {
+    const schema = Joi.object({
+      shortlink: Joi.string().optional(),
+      url: Joi.string().optional(),
+      visibility: Joi.string()
+        .allow("Workspace", "Private")
+        .optional(),
+      tag: Joi.string().optional(),
+      visitsLow: Joi.number().optional(),
+      visitsHigh: Joi.number().optional(),
+    });
+
+    return schema.validate(searchOptions);
+  };
+
   /**
-   * 
-   * @param req 
-   * @param res 
-   * @returns 
+   *
+   * @param req
+   * @param res
+   * @returns
    */
   public searchShortcuts = async (req: Request, res: Response) => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -305,7 +322,21 @@ class ShortcutController {
       } as GeneralApiResponse);
     }
 
+    /**
+     * Will get all the results if no body is provided
+     */
     const searchOptions: SearchShortcutOptions = req.body;
+    const validationError:
+      | ValidationError
+      | null
+      | undefined = this.validateSearchBody(searchOptions).error;
+
+    if (validationError) {
+      return res.status(403).json({
+        error: validationError.message,
+        data: null,
+      } as GeneralApiResponse);
+    }
 
     try {
       const shortcuts:
@@ -327,14 +358,63 @@ class ShortcutController {
         code,
       }: ServiceError = serviceError as ServiceError;
 
-      return res.status(code | 503).json({
+      return res.status(code).json({
         error,
         data: null,
       } as GeneralApiResponse);
     }
   };
 
-  // o/shortlink => should redirect the user to the link they have provided => also increment the visits here
+  public getUrlFromShortlink = async (
+    req: Request,
+    res: Response,
+  ) => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const userId: string = req.session!.oslashBeUserId;
+
+    if (!userId) {
+      return res.status(403).json({
+        error: "You are not authenticated to use this resource",
+        data: null,
+      } as GeneralApiResponse);
+    }
+
+    const { shortlink } = req.params;
+
+    if (!(typeof shortlink === "string")) {
+      return res.status(406).json({
+        data: null,
+        error: "Please pass in a valid URL",
+      } as GeneralApiResponse);
+    }
+
+    /**
+     * Fetching url from shortlink - increment the count
+     */
+    try {
+      const url = await this.shortcutService.getUrlFromShortlink(
+        userId,
+        shortlink,
+      );
+
+      return res.status(200).json({
+        data: {
+          url,
+        },
+        error: null,
+      } as GeneralApiResponse);
+    } catch (serviceError) {
+      const {
+        error,
+        code,
+      }: ServiceError = serviceError as ServiceError;
+
+      return res.status(code).json({
+        error,
+        data: null,
+      } as GeneralApiResponse);
+    }
+  };
 }
 
 export default ShortcutController;

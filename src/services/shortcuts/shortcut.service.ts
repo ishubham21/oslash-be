@@ -207,9 +207,6 @@ class ShortcutService {
     });
   };
 
-  private filterItems = (arr: any, query: string) => {
-    //
-  };
   /**
    *
    * @param userId
@@ -282,9 +279,13 @@ class ShortcutService {
             });
           }
 
+          /**
+           * Checking against undefined because of 0 case
+           * if 0 is passed by the user, it will also give false
+           */
           if (
-            searchOptions["visitsLow"] &&
-            searchOptions["visitsHigh"]
+            searchOptions["visitsLow"] != undefined &&
+            searchOptions["visitsHigh"] != undefined
           ) {
             shortcuts = shortcuts.filter(shortcut => {
               return (
@@ -298,8 +299,8 @@ class ShortcutService {
            * If visitsLow is supplied but not visitsHigh, give all the values greater
            */
           if (
-            searchOptions["visitsLow"] &&
-            !searchOptions["visitsHigh"]
+            searchOptions["visitsLow"] != undefined &&
+            searchOptions["visitsHigh"] == undefined
           ) {
             shortcuts = shortcuts.filter(shortcut => {
               return shortcut.visits >= searchOptions["visitsLow"]!;
@@ -310,11 +311,11 @@ class ShortcutService {
            * If visitsHig is supplied but not visitsLow, give all the values smaller
            */
           if (
-            !searchOptions["visitsLow"] &&
-            searchOptions["visitsHigh"]
+            searchOptions["visitsLow"] == undefined &&
+            searchOptions["visitsHigh"] != undefined
           ) {
             shortcuts = shortcuts.filter(shortcut => {
-              shortcut.visits <= searchOptions["visitsHigh"]!;
+              return shortcut.visits <= searchOptions["visitsHigh"]!;
             });
           }
 
@@ -333,6 +334,59 @@ class ShortcutService {
           }
 
           return resolve(shortcuts);
+        } catch (error) {
+          return reject({
+            error,
+            code: 503,
+          } as ServiceError);
+        }
+      })();
+    });
+  };
+
+  /**
+   *
+   * @param userId
+   * @param shortlink
+   * @returns
+   */
+  public getUrlFromShortlink = (
+    userId: string,
+    shortlink: string,
+  ) => {
+    return new Promise<string>((resolve, reject) => {
+      (async () => {
+        try {
+          const shortcut: Shortcut | null = await this.searchShortcutByShortlink(
+            userId,
+            shortlink,
+          );
+
+          if (!shortcut) {
+            return reject({
+              error: `${shortlink} shortlink could not be found`,
+              code: 404,
+            });
+          }
+
+          /**
+           * If the hit has been successful, update the visit counter
+           */
+          await this.prisma.shortcut.update({
+            where: {
+              shortlink_userId: {
+                shortlink,
+                userId,
+              },
+            },
+            data: {
+              visits: {
+                increment: 1,
+              },
+            },
+          });
+
+          return resolve(shortcut.url);
         } catch (error) {
           return reject({
             error,
