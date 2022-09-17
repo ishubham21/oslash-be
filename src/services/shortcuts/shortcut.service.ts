@@ -240,7 +240,7 @@ class ShortcutService {
           }
 
           /**
-           * Filtering shortcut that contains the given string
+           * Filtering shortcut that contains the given string from shortlink
            */
           if (searchOptions["shortlink"]) {
             shortcuts = shortcuts.filter(shortcut => {
@@ -253,6 +253,9 @@ class ShortcutService {
             });
           }
 
+          /**
+           * Filtering visibility between Workspace or Private
+           */
           if (searchOptions["visibility"]) {
             shortcuts = shortcuts.filter(shortcut => {
               return (
@@ -262,12 +265,18 @@ class ShortcutService {
             });
           }
 
+          /**
+           * Filterting from the tags
+           */
           if (searchOptions["tag"]) {
             shortcuts = shortcuts.filter(shortcut => {
               return shortcut.tags.includes(searchOptions["tag"]!);
             });
           }
 
+          /**
+           * Filtering shortcut that contains the given string from url
+           */
           if (searchOptions["url"]) {
             shortcuts = shortcuts.filter(shortcut => {
               return (
