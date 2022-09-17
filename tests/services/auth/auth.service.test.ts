@@ -80,7 +80,7 @@ describe("register functionality", () => {
         },
       });
     } catch (error) {
-      console.log(`DB Error:`, error);
+      console.log(`Error:`, error);
     }
   });
 
@@ -140,7 +140,7 @@ describe("login user", () => {
       expect(loginData.name).toBe("Dummy");
       expect(loginData.email).toBe(data.email);
     } catch (error) {
-      console.log(`DB Error:`, error);
+      console.log(`Error:`, error);
     }
   });
 
@@ -155,7 +155,7 @@ describe("login user", () => {
 
       expect(loginData.password).toBeUndefined();
     } catch (error) {
-      console.log(`DB Error:`, error);
+      console.log(`Error:`, error);
     }
   });
 
