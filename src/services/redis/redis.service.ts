@@ -8,10 +8,14 @@ class ConfigureRedis {
   private redisClient: Redis;
 
   constructor () {
-    //connectRedis is a class that makes use of express-session's session to connect to redis
+    /**
+     * connectRedis is a class that makes use of express-session's session to connect to redis
+     */
     this.RedisStore = connectRedis(session);
 
-    //configure a new redis client from ioredis
+    /**
+     * configure a new redis client from ioredis and redis options from env
+     */
     this.redisClient = new Redis(REDIS_OPTIONS);
 
     this.redisClient.on("error", error => {
