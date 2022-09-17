@@ -1,4 +1,3 @@
-
 import { Request, Response, Router } from "express";
 import ShortcutController from "../../controllers/shortcuts/shortcuts.controller";
 import { GeneralApiResponse } from "../../interfaces";
@@ -36,6 +35,22 @@ class ShortcutRoute {
       notLoggedIn,
       (req: Request, res: Response) => {
         this.shortcutContoller.listShortcuts(req, res);
+      },
+    );
+
+    this.router.post(
+      `${this.path}delete`,
+      notLoggedIn,
+      (req: Request, res: Response) => {
+        this.shortcutContoller.deleteShortcut(req, res);
+      },
+    );
+
+    this.router.post(
+      `${this.path}search`,
+      notLoggedIn,
+      (req: Request, res: Response) => {
+        this.shortcutContoller.searchShortcuts(req, res);
       },
     );
   };

@@ -52,3 +52,12 @@ export type ListSortingQueries = {
   sortBy?: SortingOptions | undefined | null;
   orderBy?: SortingOrders | undefined | null;
 };
+
+export type SearchShortcutOptions = {
+  shortlink?: string;
+  visibility?: ShortcutVisibility;
+  tag?: string;
+  url?: string;
+  visitsLow?: number;
+  visitsHigh?: number;
+};

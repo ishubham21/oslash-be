@@ -1,7 +1,6 @@
 import { User } from "@prisma/client";
 import { Request, Response } from "express";
-import Joi, { ValidationError, ValidationResult } from "joi";
-import { GeneralApiResponse, ServiceError } from "../../interfaces";
+import { GeneralApiResponse } from "../../interfaces";
 import UserService from "../../services/user/user.service";
 
 class UserController {

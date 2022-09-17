@@ -29,19 +29,10 @@ CREATE TABLE "Shortcut" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_name_key" ON "User"("name");
-
--- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE INDEX "User_id_idx" ON "User"("id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Shortcut_shortlink_key" ON "Shortcut"("shortlink");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Shortcut_url_key" ON "Shortcut"("url");
 
 -- CreateIndex
 CREATE INDEX "Shortcut_shortlink_userId_idx" ON "Shortcut"("shortlink", "userId");

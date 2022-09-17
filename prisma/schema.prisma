@@ -26,8 +26,8 @@ model User {
 }
 
 model Shortcut {
-  shortlink   String     @unique
-  url         String     @unique
+  shortlink   String
+  url         String
   visibility  LinkAccess @default(Workspace)
   tags        String[]
   description String?    @db.VarChar(2000)
@@ -42,6 +42,7 @@ model Shortcut {
   //creating a composite key as the primary key
   //this will ensure that a given shortlink is unique to each user
   @@id([shortlink, userId])
+  
   //creating an index over the given id to gain fast retrival
   @@index([shortlink, userId], type: BTree)
 }

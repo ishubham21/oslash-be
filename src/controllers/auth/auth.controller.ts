@@ -111,38 +111,38 @@ class AuthController {
      * If there are no validation errors, register the user
      * Else, notify via API response
      */
-    if (!validationError) {
-      try {
-        const id = await this.authService.register(
-          userRegistrationData,
-        );
-
-        //logging-in the user in after the user has registered
-        this.loginUserByPersistingCache(req, id);
-
-        return res.status(201).json({
-          error: null,
-          data: {
-            userId: id,
-          },
-        } as GeneralApiResponse);
-      } catch (serviceError) {
-        const {
-          error,
-          code,
-        }: ServiceError = serviceError as ServiceError;
-
-        /**
-         * Using the response code recieved from AuthService
-         */
-        return res.status(code | 503).json({
-          error,
-          data: null,
-        } as GeneralApiResponse);
-      }
-    } else {
+    if (validationError) {
       return res.status(403).json({
         error: validationError.message,
+        data: null,
+      } as GeneralApiResponse);
+    }
+
+    try {
+      const id = await this.authService.register(
+        userRegistrationData,
+      );
+
+      //logging-in the user in after the user has registered
+      this.loginUserByPersistingCache(req, id);
+
+      return res.status(201).json({
+        error: null,
+        data: {
+          userId: id,
+        },
+      } as GeneralApiResponse);
+    } catch (serviceError) {
+      const {
+        error,
+        code,
+      }: ServiceError = serviceError as ServiceError;
+
+      /**
+       * Using the response code recieved from AuthService
+       */
+      return res.status(code | 503).json({
+        error,
         data: null,
       } as GeneralApiResponse);
     }

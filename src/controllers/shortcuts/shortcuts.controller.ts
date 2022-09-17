@@ -4,6 +4,7 @@ import Joi, { ValidationError, ValidationResult } from "joi";
 import {
   GeneralApiResponse,
   ListSortingQueries,
+  SearchShortcutOptions,
   ServiceError,
   ShortcutData,
   ShortcutVisibility,
@@ -17,6 +18,11 @@ class ShortcutController {
     this.shortcutService = new ShortcutService();
   }
 
+  /**
+   * 
+   * @param shortcutData 
+   * @returns 
+   */
   private validateShortcutData = (
     shortcutData: ShortcutData,
   ): ValidationResult => {
@@ -40,6 +46,11 @@ class ShortcutController {
     return schema.validate(shortcutData);
   };
 
+  /**
+   * 
+   * @param url 
+   * @returns 
+   */
   private isUrlWhatwgCompliant = (url: string): boolean => {
     const pattern: RegExp = new RegExp(
       /^(?:(?:https?|ftp):\/\/)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/\S*)?$/,
@@ -137,6 +148,12 @@ class ShortcutController {
     }
   };
 
+  /**
+   * 
+   * @param req 
+   * @param res 
+   * @returns 
+   */
   public listShortcuts = async (req: Request, res: Response) => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const userId: string = req.session!.oslashBeUserId;
@@ -189,7 +206,7 @@ class ShortcutController {
     }
 
     const allowedOrderByValues = ["asc", "desc"];
-    if (!allowedOrderByValues.includes(sortBy)) {
+    if (!allowedOrderByValues.includes(orderBy)) {
       return res.status(403).json({
         error: 'Allowed values for sortBy are -> "asc" or "desc"',
         data: null,
@@ -225,9 +242,97 @@ class ShortcutController {
     }
   };
 
-  //delete shortcut
+  /**
+   * 
+   * @param req 
+   * @param res 
+   * @returns 
+   */
+  public deleteShortcut = async (req: Request, res: Response) => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const userId: string = req.session!.oslashBeUserId;
 
-  //search shortcuts - based on shortlink, tags, url, etc => latest updated, visits in a range, visibility
+    if (!userId) {
+      return res.status(403).json({
+        error: "You are not authenticated to use this resource",
+        data: null,
+      } as GeneralApiResponse);
+    }
+
+    const { shortlink } = req.body;
+
+    if (!shortlink) {
+      return res.status(406).json({
+        error: "Please provide a shortlink to be deleted",
+        data: null,
+      } as GeneralApiResponse);
+    }
+
+    try {
+      await this.shortcutService.deleteShortcut(userId, shortlink);
+
+      return res.status(200).json({
+        data: `Deleted the shortlink ${shortlink} successfully`,
+        error: null,
+      } as GeneralApiResponse);
+    } catch (serviceError) {
+      const {
+        error,
+        code,
+      }: ServiceError = serviceError as ServiceError;
+
+      return res.status(code | 503).json({
+        error,
+        data: null,
+      } as GeneralApiResponse);
+    }
+  };
+
+  /**
+   * 
+   * @param req 
+   * @param res 
+   * @returns 
+   */
+  public searchShortcuts = async (req: Request, res: Response) => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const userId: string = req.session!.oslashBeUserId;
+
+    if (!userId) {
+      return res.status(403).json({
+        error: "You are not authenticated to use this resource",
+        data: null,
+      } as GeneralApiResponse);
+    }
+
+    const searchOptions: SearchShortcutOptions = req.body;
+
+    try {
+      const shortcuts:
+        | Shortcut[]
+        | null = await this.shortcutService.searchShortcuts(
+        userId,
+        searchOptions,
+      );
+
+      return res.status(200).json({
+        data: {
+          shortcuts,
+        },
+        error: null,
+      } as GeneralApiResponse);
+    } catch (serviceError) {
+      const {
+        error,
+        code,
+      }: ServiceError = serviceError as ServiceError;
+
+      return res.status(code | 503).json({
+        error,
+        data: null,
+      } as GeneralApiResponse);
+    }
+  };
 
   // o/shortlink => should redirect the user to the link they have provided => also increment the visits here
 }
