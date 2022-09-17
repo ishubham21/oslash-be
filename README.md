@@ -18,6 +18,7 @@ Unique Points -
 - Single-instance DB and cache connection
 - Unit tests in Jest
 - Aesc and Desc **sorting based on shortlink, createdAt, updatedAt, no of visits (shortlink hits)**
+- Searching based on shortlink (even the substrings work), url, visibility, tags, urls visits (without or within any range)
 - Shortcut visbility option (Workspace/Private): Defaults to Workspace
 - List parameters can be combined to create a combination of 8 different requests and sorting parameters
 - Search parameters can be combined to form over 6! (6 factorial) combinations to search.
