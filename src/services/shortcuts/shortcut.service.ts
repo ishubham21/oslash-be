@@ -18,10 +18,10 @@ class ShortcutService {
   }
 
   /**
-   *
-   * @param userId
-   * @param shortlink
-   * @returns
+   * To search shortcuts using the shortlink
+   * @param userId id of user who's currently logged in
+   * @param shortlink shortlink to be searched
+   * @returns promise that resolves to shortcut if found, else null
    */
   public searchShortcutByShortlink = (
     userId: string,
@@ -51,14 +51,14 @@ class ShortcutService {
   };
 
   /**
-   *
-   * @param shortcutData
-   * @param userId
-   * @returns
+   * Adds shortcut to the particular user
+   * @param shortcutData shortlink (required)
+   * @param userId user id of the logged-in user
+   * @returns a promise that resolves to shortlink
    */
   public addShortcut = (
-    shortcutData: ShortcutData,
     userId: string,
+    shortcutData: ShortcutData,
   ) => {
     return new Promise<string>((resolve, reject) => {
       (async () => {
@@ -111,9 +111,10 @@ class ShortcutService {
 
   /**
    * List all the user shortcuts with the optional sorting filters
-   * @param userId
-   * @param sortBy
-   * @param orderBy
+   * @param userId - userId of the currently logged in user
+   * @param sortBy - sortBy (createdAt/updatedAt/visits/shortlink)
+   * @param orderBy - order of sorting (asc/desc)
+   * @returns a promise with the sorted list of all shortcuts
    */
   public listShortcuts = (
     userId: string,
@@ -156,10 +157,10 @@ class ShortcutService {
   };
 
   /**
-   *
-   * @param userId
-   * @param shortlink
-   * @returns
+   * To delete a given shortcut
+   * @param userId - user id of the current logged in user
+   * @param shortlink - shortlink to be deleted
+   * @returns - promise that resolves to deleted shortlink
    */
   public deleteShortcut = (userId: string, shortlink: string) => {
     return new Promise<string>((resolve, reject) => {
@@ -208,10 +209,10 @@ class ShortcutService {
   };
 
   /**
-   *
-   * @param userId
-   * @param searchOptions
-   * @returns
+   * Helps in searching shortcuts
+   * @param userId user id of the authenticated user
+   * @param searchOptions - how to perform search (shortlink, url, visitsLow, visitsHigh)
+   * @returns search results
    */
   public searchShortcuts = (
     userId: string,
@@ -328,13 +329,9 @@ class ShortcutService {
             });
           }
 
-          if (shortcuts.length == 0 || !shortcuts) {
-            return reject({
-              error: "No shortcut for this search could be found",
-              code: 404,
-            } as ServiceError);
-          }
-
+          /**
+           * If no shortcuts are present after search, inform the user
+           */
           if (shortcuts.length == 0 || !shortcuts) {
             return reject({
               error: "No shortcut for this search could be found",
@@ -354,10 +351,10 @@ class ShortcutService {
   };
 
   /**
-   *
-   * @param userId
-   * @param shortlink
-   * @returns
+   * To get url from shortlink and update the url hits (visit count)
+   * @param userId - user id of the authenticated user
+   * @param shortlink shorlink for which url is to be searched
+   * @returns a promise that resolves to url for the provided shortlink
    */
   public getUrlFromShortlink = (
     userId: string,

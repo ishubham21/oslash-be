@@ -85,7 +85,6 @@ describe("register functionality", () => {
   });
 
   it("should not register the user if the user is already present", async () => {
-    let registerError: ServiceError;
     const data = {
       name: "Dummy",
       email: "dummyseedemail@gmail.com",
@@ -95,8 +94,7 @@ describe("register functionality", () => {
     try {
       await authService.register(data);
     } catch (error) {
-      registerError = error;
-      expect(registerError).toStrictEqual({
+      expect(error).toStrictEqual({
         error: "User with this email already exists",
         code: 409,
       });
@@ -160,7 +158,6 @@ describe("login user", () => {
   });
 
   it("should return an error if the user is not found in the DB", async () => {
-    let registerError: ServiceError;
     const data = {
       email: "random@gmail.com",
       password: "dummy@password",
@@ -169,8 +166,7 @@ describe("login user", () => {
     try {
       await authService.login(data);
     } catch (error) {
-      registerError = error;
-      expect(registerError).toStrictEqual({
+      expect(error).toStrictEqual({
         error: "User with this email couldn't be found",
         code: 409,
       });
@@ -178,7 +174,6 @@ describe("login user", () => {
   });
 
   it("should return an error if password is incorrect", async () => {
-    let registerError: ServiceError;
     const data = {
       email: "dummyseedemail@gmail.com",
       password: "@password",
@@ -187,8 +182,7 @@ describe("login user", () => {
     try {
       await authService.login(data);
     } catch (error) {
-      registerError = error;
-      expect(registerError).toStrictEqual({
+      expect(error).toStrictEqual({
         error: "Password is not valid",
         code: 401,
       });

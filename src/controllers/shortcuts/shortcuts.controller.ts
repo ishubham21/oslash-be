@@ -122,8 +122,8 @@ class ShortcutController {
        * Trying to add the shortcut in the DB
        */
       const shorturl = await this.shortcutService.addShortcut(
-        shortcutData,
         userId,
+        shortcutData,
       );
 
       return res.status(201).json({
