@@ -25,7 +25,13 @@ Unique Points -
 
 #### Postman Collection can be found [here](https://www.postman.com/dark-resonance-160564/workspace/646a5acd-0790-45a7-a1d6-ab3b78e1452e/collection/13812176-1c6429c9-f7de-4805-a12a-c01963df2d9a?action=share&creator=13812176)
 
+API Documentation and use-guide can be accessed from the collection itself. Steps are -
+- Near the _oslash_ folder, click on the three buttons to expand options
+- From the options, select _View Documentation_
+
 #### Todo
 
 - [] Readme Documentation
 - [] Tests
+- [] Add Redis HOST, and Prisma DB_URL in vercel env
+- [] Complete comments in the code
