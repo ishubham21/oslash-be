@@ -13,7 +13,7 @@ describe("encryption and decryption", () => {
     authService = <any>new AuthService();
   });
 
-  test("encrypted and decrypted passwords should match", async () => {
+  it("encrypted and decrypted passwords should match", async () => {
     const encryptedPassword: string = await authService.encryptPassword(
       "random-string",
     );
