@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1663437713478" clover="3.2.0">
-  <project timestamp="1663437713479" name="All files">
-    <metrics statements="51" coveredstatements="39" conditionals="7" coveredconditionals="6" methods="16" coveredmethods="13" elements="74" coveredelements="58" complexity="0" loc="51" ncloc="51" packages="3" files="3" classes="3"/>
+<coverage generated="1663438862428" clover="3.2.0">
+  <project timestamp="1663438862428" name="All files">
+    <metrics statements="51" coveredstatements="44" conditionals="7" coveredconditionals="6" methods="16" coveredmethods="16" elements="74" coveredelements="66" complexity="0" loc="51" ncloc="51" packages="3" files="3" classes="3"/>
     <package name="services.auth">
       <metrics statements="35" coveredstatements="30" conditionals="6" coveredconditionals="5" methods="9" coveredmethods="9"/>
       <file name="auth.service.ts" path="/home/ishubham/Desktop/oslash-be/src/services/auth/auth.service.ts">
         <metrics statements="35" coveredstatements="30" conditionals="6" coveredconditionals="5" methods="9" coveredmethods="9"/>
-        <line num="18" count="4" type="stmt"/>
-        <line num="19" count="4" type="stmt"/>
-        <line num="27" count="4" type="stmt"/>
+        <line num="18" count="3" type="stmt"/>
+        <line num="19" count="3" type="stmt"/>
+        <line num="27" count="3" type="stmt"/>
         <line num="30" count="2" type="stmt"/>
         <line num="31" count="2" type="stmt"/>
         <line num="32" count="2" type="stmt"/>
-        <line num="41" count="4" type="stmt"/>
+        <line num="41" count="3" type="stmt"/>
         <line num="45" count="4" type="stmt"/>
-        <line num="53" count="4" type="stmt"/>
+        <line num="53" count="3" type="stmt"/>
         <line num="54" count="2" type="stmt"/>
         <line num="59" count="2" type="stmt"/>
         <line num="60" count="2" type="stmt"/>
@@ -25,7 +25,7 @@
         <line num="79" count="1" type="stmt"/>
         <line num="83" count="1" type="stmt"/>
         <line num="85" count="0" type="stmt"/>
-        <line num="99" count="4" type="stmt"/>
+        <line num="99" count="3" type="stmt"/>
         <line num="100" count="4" type="stmt"/>
         <line num="101" count="4" type="stmt"/>
         <line num="102" count="4" type="stmt"/>
@@ -44,23 +44,23 @@
       </file>
     </package>
     <package name="services.user">
-      <metrics statements="15" coveredstatements="8" conditionals="1" coveredconditionals="1" methods="7" coveredmethods="4"/>
+      <metrics statements="15" coveredstatements="13" conditionals="1" coveredconditionals="1" methods="7" coveredmethods="7"/>
       <file name="user.service.ts" path="/home/ishubham/Desktop/oslash-be/src/services/user/user.service.ts">
-        <metrics statements="15" coveredstatements="8" conditionals="1" coveredconditionals="1" methods="7" coveredmethods="4"/>
-        <line num="8" count="4" type="stmt"/>
-        <line num="16" count="4" type="stmt"/>
-        <line num="20" count="6" type="stmt"/>
-        <line num="24" count="6" type="stmt"/>
-        <line num="25" count="6" type="stmt"/>
-        <line num="26" count="6" type="stmt"/>
-        <line num="34" count="6" type="stmt"/>
+        <metrics statements="15" coveredstatements="13" conditionals="1" coveredconditionals="1" methods="7" coveredmethods="7"/>
+        <line num="8" count="5" type="stmt"/>
+        <line num="16" count="5" type="stmt"/>
+        <line num="20" count="10" type="stmt"/>
+        <line num="24" count="10" type="stmt"/>
+        <line num="25" count="10" type="stmt"/>
+        <line num="26" count="10" type="stmt"/>
+        <line num="34" count="10" type="stmt"/>
         <line num="36" count="0" type="stmt"/>
-        <line num="47" count="4" type="stmt"/>
-        <line num="48" count="0" type="stmt"/>
-        <line num="49" count="0" type="stmt"/>
-        <line num="50" count="0" type="stmt"/>
-        <line num="51" count="0" type="stmt"/>
-        <line num="59" count="0" type="stmt"/>
+        <line num="47" count="5" type="stmt"/>
+        <line num="48" count="2" type="stmt"/>
+        <line num="49" count="2" type="stmt"/>
+        <line num="50" count="2" type="stmt"/>
+        <line num="51" count="2" type="stmt"/>
+        <line num="59" count="2" type="stmt"/>
         <line num="61" count="0" type="stmt"/>
       </file>
     </package>
