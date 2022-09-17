@@ -131,7 +131,9 @@ class AuthService {
             });
           }
 
-          //extracting password from the user
+          /**
+           * Extract the password from user and equate it null to prevent leakage
+           */
           // eslint-disable-next-line prefer-const
           let { password, ...userWithoutPassword } = user;
           password = (null as unknown) as string;
