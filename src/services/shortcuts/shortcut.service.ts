@@ -180,7 +180,7 @@ class ShortcutService {
           if (!shortcut) {
             return reject({
               error:
-                "The requested doesn't exist and hence can't be deleted",
+                "The requested shortcut doesn't exist and hence can't be deleted",
               code: 406,
             } as ServiceError);
           }
