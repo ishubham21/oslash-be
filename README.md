@@ -151,11 +151,12 @@ npm run redis:down
 npm run compose:db-up
 ```
 
-7. Verify the containers are running by ensuring the presence of 2 containers - Postgres and Redis
+7. Push the DB schema and the latest migration to the DB
+```
+npm run db:deploy
+```
+**NOTE** Do not run db:push or db:migrate unless there has been any external changes in the schema.
 
-```
-npm run list:containers
-```
 
 8. Start the local server
 
