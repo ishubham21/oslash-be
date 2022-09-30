@@ -102,12 +102,139 @@ I have used Postgres as the underlying Database for this application. Some of th
 - Webpack, Babel, and TypeScript Compiler (for compiling .ts files into a single minified and obsfucated version)
 - Express
 
-### Coverage Report 
+### Coverage Report
 
-Coverage report for the unit test is as follows - 
+Coverage report for the unit test is as follows -
 ![Screenshot from 2022-09-30 22-04-08](https://user-images.githubusercontent.com/34435822/193337978-a8b1789f-fe45-4f34-bae1-df7f7e116631.png)
 
-* Tests for the Services report a 100% coverage in Unit Tests while Controllers and Routes show a lower coverage due to the need of the Integration Testing. 
+- Tests for the Services report a 100% coverage in Unit Tests while Controllers and Routes show a lower coverage due to the need of the Integration Testing.
+
+### Steps to setup and test the application locally
+
+**NOTE** Most of the scripts for this application are written keeping in mind a UNIX based system. Therefore, to operate it on a windows system, from the [package.json](package.json) under the _scripts_ section, remove _sudo_ from wherever it is present
+
+1. Clone the repository -
+
+```
+git clone https://github.com/ishubham21/oslash-be
+```
+
+2. Install the dependencies -
+
+```
+npm install
+```
+
+3. Make sure to create an _.env_ file and copy the configurations similar to that given in _.env.example_. 
+
+4. Make sure that the ports 5432 and 6379 are free before moving on to the next step.
+
+5. To kill any activity on the port 5432-
+
+```
+npm run kill:p
+```
+
+or to kill any activity on the port 6379-
+
+```
+npm run kill:r
+```
+
+6. Shut down any instances of redis (if already running)
+
+```
+npm run redis:down
+```
+
+7. Up the DB and Cache
+
+```
+npm run compose:db-up
+```
+
+8. Verify the containers are running by ensuring the presence of 2 containers - Postgres and Redis
+
+```
+npm run list:containers
+```
+
+9. Start the local server
+
+```
+npm run dev
+```
+
+10. If you need to make use of hosted PostgreSQL and/or Redis Cache service, consider updating the environment variables. This is followed by a series of steps that are not listed here currently. 
+
+You should now have a server running on [http://localhost:4000](http://localhost:4000)
+
+All of this can alternatively be done by the command - 
+
+```
+npm run compose:up
+```
+
+This would expose the API on [http://localhost:4000](http://localhost:4000) 
+
+However, this is not recommended under slow connections due to timeouts while installing a large number of node modules. 
+
+#### Some Additional Commands 
+
+1. To run the unit tests - 
+```
+npm run test
+```
+
+**NOTE** You must have containers up and running for the tests to be successful. 
+
+2. Access the Redis CLI inside of the docker container - 
+```
+npm run redis:cli
+```
+**NOTE** You might need to change the name of the docker container with that given by your machine
+
+3. Generate the build files - 
+```
+npm run build
+```
+
+4. Kill the DB and Cache containers - 
+```
+npm run compose:db-down
+```
+
+**NOTE** This would not erase any data inside the DB and Cache
+
+5. Formatting 
+```
+npm run format
+```
+
+6. Reset the database inside that of the container -
+```
+npm run db:reset
+```
+
+7. To apply migrations to the production DBs
+```
+npm run db:deploy
+```
+
+8. Free the port 4000
+```
+npm run kill:s
+```
+
+9. Visualize the data in the Admin Studio
+```
+npm run prisma:studio
+```
+
+10. Linting - 
+```
+npm run lint:fix
+```
 
 ### Unique Points -
 
@@ -131,5 +258,3 @@ Coverage report for the unit test is as follows -
 - Shortcut visbility option (Workspace/Private): Defaults to Workspace
 - List parameters can be combined to create a combination of 8 different requests and sorting parameters
 - Search parameters can be combined to form over 6! (6 factorial) combinations to search.
-
-
