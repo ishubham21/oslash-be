@@ -125,11 +125,9 @@ git clone https://github.com/ishubham21/oslash-be
 npm install
 ```
 
-3. Make sure to create an _.env_ file and copy the configurations similar to that given in _.env.example_. 
+3. Make sure to create an _.env_ file and copy the configurations similar to that given in [.env.example](.env.example).
 
-4. Make sure that the ports 5432 and 6379 are free before moving on to the next step.
-
-5. To kill any activity on the port 5432-
+4. Make sure that the ports 5432 and 6379 are free before moving on to the next step. To kill any activity on the port 5432-
 
 ```
 npm run kill:p
@@ -141,97 +139,106 @@ or to kill any activity on the port 6379-
 npm run kill:r
 ```
 
-6. Shut down any instances of redis (if already running)
+5. Shut down any instances of redis (if already running)
 
 ```
 npm run redis:down
 ```
 
-7. Up the DB and Cache
+6. Up the DB and Cache
 
 ```
 npm run compose:db-up
 ```
 
-8. Verify the containers are running by ensuring the presence of 2 containers - Postgres and Redis
+7. Verify the containers are running by ensuring the presence of 2 containers - Postgres and Redis
 
 ```
 npm run list:containers
 ```
 
-9. Start the local server
+8. Start the local server
 
 ```
 npm run dev
 ```
 
-10. If you need to make use of hosted PostgreSQL and/or Redis Cache service, consider updating the environment variables. This is followed by a series of steps that are not listed here currently. 
-
 You should now have a server running on [http://localhost:4000](http://localhost:4000)
 
-All of this can alternatively be done by the command - 
+All of this can alternatively be done by the command -
 
 ```
 npm run compose:up
 ```
 
-This would expose the API on [http://localhost:4000](http://localhost:4000) 
+This would expose the API on [http://localhost:4000](http://localhost:4000)
 
-However, this is not recommended under slow connections due to timeouts while installing a large number of node modules. 
+However, this is not recommended under slow connections due to timeouts while installing a large number of node modules.
 
-#### Some Additional Commands 
+#### Some Additional Commands
 
-1. To run the unit tests - 
+1. To run the unit tests -
+
 ```
 npm run test
 ```
 
-**NOTE** You must have containers up and running for the tests to be successful. 
+**NOTE** You must have containers up and running for the tests to be successful.
 
-2. Access the Redis CLI inside of the docker container - 
+2. Access the Redis CLI inside of the docker container -
+
 ```
 npm run redis:cli
 ```
+
 **NOTE** You might need to change the name of the docker container with that given by your machine
 
-3. Generate the build files - 
+3. Generate the build files -
+
 ```
 npm run build
 ```
 
-4. Kill the DB and Cache containers - 
+4. Kill the DB and Cache containers -
+
 ```
 npm run compose:db-down
 ```
 
 **NOTE** This would not erase any data inside the DB and Cache
 
-5. Formatting 
+5. Formatting
+
 ```
 npm run format
 ```
 
 6. Reset the database inside that of the container -
+
 ```
 npm run db:reset
 ```
 
 7. To apply migrations to the production DBs
+
 ```
 npm run db:deploy
 ```
 
 8. Free the port 4000
+
 ```
 npm run kill:s
 ```
 
 9. Visualize the data in the Admin Studio
+
 ```
 npm run prisma:studio
 ```
 
-10. Linting - 
+10. Linting -
+
 ```
 npm run lint:fix
 ```
