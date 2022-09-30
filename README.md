@@ -1,6 +1,6 @@
 ## Oslash
 
-API documentation can be found here - [Postman Collection](https://www.postman.com/dark-resonance-160564/workspace/646a5acd-0790-45a7-a1d6-ab3b78e1452e/collection/13812176-1c6429c9-f7de-4805-a12a-c01963df2d9a?action=share&creator=13812176)
+**API documentation can be found here** - [Postman Collection](https://www.postman.com/dark-resonance-160564/workspace/646a5acd-0790-45a7-a1d6-ab3b78e1452e/collection/13812176-1c6429c9-f7de-4805-a12a-c01963df2d9a?action=share&creator=13812176)
 
 API Documentation and use-guide can be accessed from the collection itself. Steps are -
 
@@ -103,7 +103,7 @@ I have used Postgres as the underlying Database for this application. Some of th
 Coverage report for the unit test is as follows - 
 
 
-Unique Points -
+### Unique Points -
 
 - PostgreSQL + TypeScript + Redis + Webpack + Docker + Prisma
 - Indexing of DB tables around common search paramters in the form of a BTree
