@@ -60,6 +60,8 @@ I have used Postgres as the underlying Database for this application. Some of th
 
 1. User Table
 
+![Screenshot from 2022-10-01 00-19-08](https://user-images.githubusercontent.com/34435822/193337635-01181514-5a38-42ef-8296-4f65445f43a9.png)
+
 - id (String) - Auto generated UUID
 - name (String) - Maximum of 64 characters are allowed
 - email (String) - Unique Key (for searching purposes)
@@ -71,6 +73,8 @@ I have used Postgres as the underlying Database for this application. Some of th
 **Note** - User table is indexed around the _id_ field using the BTree mechanism.
 
 2. Shortcut Table
+
+![Screenshot from 2022-10-01 00-19-17](https://user-images.githubusercontent.com/34435822/193337795-ab388abd-157c-4fee-b1b1-902cd49439fe.png)
 
 - shortlink (String)
 - url (String)
@@ -101,7 +105,9 @@ I have used Postgres as the underlying Database for this application. Some of th
 ### Coverage Report 
 
 Coverage report for the unit test is as follows - 
+![Screenshot from 2022-09-30 22-04-08](https://user-images.githubusercontent.com/34435822/193337978-a8b1789f-fe45-4f34-bae1-df7f7e116631.png)
 
+* Tests for the Services report a 100% coverage in Unit Tests while Controllers and Routes show a lower coverage due to the need of the Integration Testing. 
 
 ### Unique Points -
 
